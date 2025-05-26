@@ -65,26 +65,27 @@ const SaveInspoDialog = ({ open, onOpenChange }: SaveInspoDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Save New Inspiration</DialogTitle>
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto mx-4 sm:mx-auto">
+        <DialogHeader className="pb-4">
+          <DialogTitle className="text-lg sm:text-xl">Save New Inspiration</DialogTitle>
         </DialogHeader>
         
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 sm:gap-6 py-2">
           <div className="grid gap-2">
-            <Label htmlFor="url">Content URL *</Label>
+            <Label htmlFor="url" className="text-sm font-medium">Content URL *</Label>
             <Input
               id="url"
               placeholder="https://tiktok.com/@user/video/..."
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              className="h-11 text-base"
             />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="platform">Platform *</Label>
+            <Label htmlFor="platform" className="text-sm font-medium">Platform *</Label>
             <Select value={platform} onValueChange={setPlatform}>
-              <SelectTrigger>
+              <SelectTrigger className="h-11">
                 <SelectValue placeholder="Select platform" />
               </SelectTrigger>
               <SelectContent>
@@ -99,9 +100,9 @@ const SaveInspoDialog = ({ open, onOpenChange }: SaveInspoDialogProps) => {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="calendar">Calendar *</Label>
+            <Label htmlFor="calendar" className="text-sm font-medium">Calendar *</Label>
             <Select value={calendar} onValueChange={setCalendar}>
-              <SelectTrigger>
+              <SelectTrigger className="h-11">
                 <SelectValue placeholder="Select calendar" />
               </SelectTrigger>
               <SelectContent>
@@ -114,7 +115,7 @@ const SaveInspoDialog = ({ open, onOpenChange }: SaveInspoDialogProps) => {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="tags">Tags</Label>
+            <Label htmlFor="tags" className="text-sm font-medium">Tags</Label>
             <div className="flex gap-2">
               <Input
                 id="tags"
@@ -122,35 +123,51 @@ const SaveInspoDialog = ({ open, onOpenChange }: SaveInspoDialogProps) => {
                 value={currentTag}
                 onChange={(e) => setCurrentTag(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                className="h-11 text-base flex-1"
               />
-              <Button type="button" onClick={addTag}>Add</Button>
+              <Button type="button" onClick={addTag} className="h-11 px-4">Add</Button>
             </div>
-            <div className="flex flex-wrap gap-1 mt-2">
-              {tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                  {tag}
-                  <X className="h-3 w-3 cursor-pointer" onClick={() => removeTag(tag)} />
-                </Badge>
-              ))}
-            </div>
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {tags.map((tag) => (
+                  <Badge key={tag} variant="secondary" className="flex items-center gap-1 py-1 px-2 text-sm">
+                    {tag}
+                    <X 
+                      className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                      onClick={() => removeTag(tag)} 
+                    />
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes" className="text-sm font-medium">Notes</Label>
             <Textarea
               id="notes"
               placeholder="e.g., funny trend for March campaign"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              className="min-h-[80px] text-base resize-none"
             />
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:justify-end pt-4 border-t">
+          <Button 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            className="h-11 sm:h-10 order-2 sm:order-1"
+          >
             Cancel
           </Button>
-          <Button onClick={handleSave}>Save Inspiration</Button>
+          <Button 
+            onClick={handleSave}
+            className="h-11 sm:h-10 order-1 sm:order-2"
+          >
+            Save Inspiration
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
