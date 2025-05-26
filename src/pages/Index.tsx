@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, Share } from "lucide-react";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
 import InspoVault from "@/components/InspoVault";
 import SaveInspoDialog from "@/components/SaveInspoDialog";
@@ -15,7 +15,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("vault");
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full bg-gray-50">
         <AppSidebar />
         
@@ -24,6 +24,7 @@ const Index = () => {
           <header className="bg-white border-b border-gray-200 px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
+                <SidebarTrigger />
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                     <span className="text-purple-600 font-semibold text-sm">JA</span>
