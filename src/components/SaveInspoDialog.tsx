@@ -5,10 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface SaveInspoDialogProps {
   open: boolean;
@@ -18,11 +23,24 @@ interface SaveInspoDialogProps {
 const SaveInspoDialog = ({ open, onOpenChange }: SaveInspoDialogProps) => {
   const [url, setUrl] = useState("");
   const [notes, setNotes] = useState("");
-  const [calendar, setCalendar] = useState("");
-  const [platform, setPlatform] = useState("");
+  const [selectedCalendars, setSelectedCalendars] = useState<string[]>([]);
+  const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
   const { toast } = useToast();
+
+  const calendarOptions = [
+    { id: "march-campaign", label: "March Campaign" },
+    { id: "general-content", label: "General Content" },
+    { id: "product-launch", label: "Product Launch" },
+    { id: "trending", label: "Trending Ideas" }
+  ];
+
+  const collectionOptions = [
+    { id: "trending-audio", label: "Trending Audio" },
+    { id: "heyorca-summit", label: "HeyOrca Summit Ideas" },
+    { id: "hackathon-ideas", label: "Hackathon Ideas" }
+  ];
 
   const addTag = () => {
     if (currentTag.trim() && !tags.includes(currentTag.trim())) {
@@ -35,18 +53,34 @@ const SaveInspoDialog = ({ open, onOpenChange }: SaveInspoDialogProps) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
+  const toggleCalendar = (calendarId: string) => {
+    setSelectedCalendars(prev => 
+      prev.includes(calendarId) 
+        ? prev.filter(id => id !== calendarId)
+        : [...prev, calendarId]
+    );
+  };
+
+  const toggleCollection = (collectionId: string) => {
+    setSelectedCollections(prev => 
+      prev.includes(collectionId) 
+        ? prev.filter(id => id !== collectionId)
+        : [...prev, collectionId]
+    );
+  };
+
   const handleSave = () => {
-    if (!url || !calendar || !platform) {
+    if (!url || selectedCalendars.length === 0) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please provide a URL and select at least one calendar.",
         variant: "destructive",
       });
       return;
     }
 
     // Here you would typically save to your backend
-    console.log("Saving inspiration:", { url, notes, calendar, platform, tags });
+    console.log("Saving inspiration:", { url, notes, selectedCalendars, selectedCollections, tags });
     
     toast({
       title: "Inspiration Saved!",
@@ -56,8 +90,8 @@ const SaveInspoDialog = ({ open, onOpenChange }: SaveInspoDialogProps) => {
     // Reset form
     setUrl("");
     setNotes("");
-    setCalendar("");
-    setPlatform("");
+    setSelectedCalendars([]);
+    setSelectedCollections([]);
     setTags([]);
     setCurrentTag("");
     onOpenChange(false);
@@ -83,35 +117,85 @@ const SaveInspoDialog = ({ open, onOpenChange }: SaveInspoDialogProps) => {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="platform" className="text-sm font-medium">Platform *</Label>
-            <Select value={platform} onValueChange={setPlatform}>
-              <SelectTrigger className="h-11">
-                <SelectValue placeholder="Select platform" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tiktok">TikTok</SelectItem>
-                <SelectItem value="instagram">Instagram</SelectItem>
-                <SelectItem value="youtube">YouTube</SelectItem>
-                <SelectItem value="twitter">Twitter</SelectItem>
-                <SelectItem value="linkedin">LinkedIn</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label className="text-sm font-medium">Calendar *</Label>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-11 justify-between">
+                  {selectedCalendars.length > 0 
+                    ? `${selectedCalendars.length} calendar(s) selected`
+                    : "Select calendars"
+                  }
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full">
+                {calendarOptions.map((calendar) => (
+                  <DropdownMenuCheckboxItem
+                    key={calendar.id}
+                    checked={selectedCalendars.includes(calendar.id)}
+                    onCheckedChange={() => toggleCalendar(calendar.id)}
+                  >
+                    {calendar.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {selectedCalendars.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {selectedCalendars.map((calendarId) => {
+                  const calendar = calendarOptions.find(c => c.id === calendarId);
+                  return (
+                    <Badge key={calendarId} variant="secondary" className="flex items-center gap-1">
+                      {calendar?.label}
+                      <X 
+                        className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                        onClick={() => toggleCalendar(calendarId)} 
+                      />
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="calendar" className="text-sm font-medium">Calendar *</Label>
-            <Select value={calendar} onValueChange={setCalendar}>
-              <SelectTrigger className="h-11">
-                <SelectValue placeholder="Select calendar" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="march-campaign">March Campaign</SelectItem>
-                <SelectItem value="general-content">General Content</SelectItem>
-                <SelectItem value="product-launch">Product Launch</SelectItem>
-                <SelectItem value="trending">Trending Ideas</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label className="text-sm font-medium">Collections</Label>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-11 justify-between">
+                  {selectedCollections.length > 0 
+                    ? `${selectedCollections.length} collection(s) selected`
+                    : "Select collections"
+                  }
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full">
+                {collectionOptions.map((collection) => (
+                  <DropdownMenuCheckboxItem
+                    key={collection.id}
+                    checked={selectedCollections.includes(collection.id)}
+                    onCheckedChange={() => toggleCollection(collection.id)}
+                  >
+                    {collection.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {selectedCollections.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {selectedCollections.map((collectionId) => {
+                  const collection = collectionOptions.find(c => c.id === collectionId);
+                  return (
+                    <Badge key={collectionId} variant="secondary" className="flex items-center gap-1">
+                      {collection?.label}
+                      <X 
+                        className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                        onClick={() => toggleCollection(collectionId)} 
+                      />
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="grid gap-2">
