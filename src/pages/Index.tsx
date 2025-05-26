@@ -9,7 +9,6 @@ import AppSidebar from "@/components/AppSidebar";
 import InspoVault from "@/components/InspoVault";
 import SaveInspoDialog from "@/components/SaveInspoDialog";
 import Collections from "@/components/Collections";
-import TeamCollaboration from "@/components/TeamCollaboration";
 
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -66,12 +65,6 @@ const Index = () => {
                     >
                       Collections
                     </TabsTrigger>
-                    <TabsTrigger 
-                      value="collaborate" 
-                      className="text-gray-500 border-b-2 border-transparent bg-transparent rounded-none px-4 py-2 data-[state=active]:text-blue-600 data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-gray-700"
-                    >
-                      Discovery
-                    </TabsTrigger>
                   </TabsList>
                   
                   <div className="flex items-center gap-2">
@@ -99,10 +92,6 @@ const Index = () => {
                 
                 <TabsContent value="collections" className="mt-0">
                   <Collections />
-                </TabsContent>
-                
-                <TabsContent value="collaborate" className="mt-0">
-                  <TeamCollaboration />
                 </TabsContent>
               </Tabs>
             </div>

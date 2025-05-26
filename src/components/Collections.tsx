@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,39 +22,39 @@ const Collections = () => {
   const [collections, setCollections] = useState<Collection[]>([
     {
       id: "1",
-      name: "March Campaign Ideas",
-      description: "Funny trends we can adapt for our March campaign",
+      name: "Trending Audio",
+      description: "Popular audio tracks and sounds for social media content",
       thumbnails: [
-        "https://placehold.co/100x100/5271FF/FFFFFF.png",
-        "https://placehold.co/100x100/E1306C/FFFFFF.png",
-        "https://placehold.co/100x100/FF0000/FFFFFF.png"
+        "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400&h=400&fit=crop"
       ],
-      itemCount: 12,
+      itemCount: 15,
       shared: true,
-      members: 3
+      members: 4
     },
     {
       id: "2",
-      name: "Product Demos",
-      description: "Different ways to showcase our products",
+      name: "HeyOrca Summit Ideas",
+      description: "Creative content ideas from the HeyOrca Summit event",
       thumbnails: [
-        "https://placehold.co/100x100/FF0000/FFFFFF.png",
-        "https://placehold.co/100x100/1DA1F2/FFFFFF.png"
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop",
+        "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop"
       ],
       itemCount: 8,
-      shared: false,
-      members: 0
+      shared: true,
+      members: 6
     },
     {
       id: "3",
-      name: "Testimonial Formats",
-      description: "Creative ways to present customer reviews",
+      name: "Hackathon Ideas",
+      description: "Innovative tech and creative solutions for rapid development",
       thumbnails: [
-        "https://placehold.co/100x100/E1306C/FFFFFF.png"
+        "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop"
       ],
-      itemCount: 5,
-      shared: true,
-      members: 2
+      itemCount: 12,
+      shared: false,
+      members: 0
     }
   ]);
 
