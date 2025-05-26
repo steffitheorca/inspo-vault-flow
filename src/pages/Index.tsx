@@ -5,6 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, Share } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import AppSidebar from "@/components/AppSidebar";
 import InspoVault from "@/components/InspoVault";
 import SaveInspoDialog from "@/components/SaveInspoDialog";
@@ -13,6 +21,34 @@ import Collections from "@/components/Collections";
 const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("vault");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+
+  const availableTags = ["funny", "trend", "music", "trending", "architecture", "city"];
+  const availablePlatforms = ["instagram", "tiktok"];
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const togglePlatform = (platform: string) => {
+    setSelectedPlatforms(prev => 
+      prev.includes(platform) 
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
+    );
+  };
+
+  const clearAllFilters = () => {
+    setSelectedTags([]);
+    setSelectedPlatforms([]);
+    setSearchTerm("");
+  };
 
   return (
     <SidebarProvider defaultOpen={false}>
@@ -69,13 +105,66 @@ const Index = () => {
                   </TabsList>
                   
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" className="flex items-center gap-2">
-                      <Filter className="h-4 w-4" />
-                      Filter
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="flex items-center gap-2">
+                          <Filter className="h-4 w-4" />
+                          Filter
+                          {(selectedTags.length > 0 || selectedPlatforms.length > 0) && (
+                            <span className="ml-1 px-1.5 py-0.5 text-xs bg-blue-100 text-blue-600 rounded-full">
+                              {selectedTags.length + selectedPlatforms.length}
+                            </span>
+                          )}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56 bg-white">
+                        <DropdownMenuLabel>Filter by Platform</DropdownMenuLabel>
+                        {availablePlatforms.map((platform) => (
+                          <DropdownMenuCheckboxItem
+                            key={platform}
+                            checked={selectedPlatforms.includes(platform)}
+                            onCheckedChange={() => togglePlatform(platform)}
+                          >
+                            {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                        
+                        <DropdownMenuSeparator />
+                        
+                        <DropdownMenuLabel>Filter by Tags</DropdownMenuLabel>
+                        {availableTags.map((tag) => (
+                          <DropdownMenuCheckboxItem
+                            key={tag}
+                            checked={selectedTags.includes(tag)}
+                            onCheckedChange={() => toggleTag(tag)}
+                          >
+                            {tag}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                        
+                        {(selectedTags.length > 0 || selectedPlatforms.length > 0) && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={clearAllFilters}
+                              className="w-full justify-start h-8"
+                            >
+                              Clear all filters
+                            </Button>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                     <div className="relative">
                       <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                      <Input placeholder="Search" className="pl-8 w-64" />
+                      <Input 
+                        placeholder="Search" 
+                        className="pl-8 w-64" 
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
                     </div>
                     <Button 
                       onClick={() => setIsAddDialogOpen(true)} 
@@ -88,7 +177,11 @@ const Index = () => {
                 </div>
                 
                 <TabsContent value="vault" className="mt-0">
-                  <InspoVault />
+                  <InspoVault 
+                    searchTerm={searchTerm}
+                    selectedTags={selectedTags}
+                    selectedPlatforms={selectedPlatforms}
+                  />
                 </TabsContent>
                 
                 <TabsContent value="collections" className="mt-0">

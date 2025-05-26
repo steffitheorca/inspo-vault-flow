@@ -1,11 +1,7 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Heart, MessageCircle, Share, Check, Search, Filter, Bookmark } from "lucide-react";
+import { Heart, MessageCircle, Share, Bookmark } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface InspoItem {
@@ -24,10 +20,13 @@ interface InspoItem {
   account: string;
 }
 
-const InspoVault = () => {
-  const [filter, setFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [platformFilter, setPlatformFilter] = useState("all");
+interface InspoVaultProps {
+  searchTerm: string;
+  selectedTags: string[];
+  selectedPlatforms: string[];
+}
+
+const InspoVault = ({ searchTerm, selectedTags, selectedPlatforms }: InspoVaultProps) => {
   const { toast } = useToast();
 
   // Mock data - updated to match the reference design
@@ -123,17 +122,16 @@ const InspoVault = () => {
       item.notes.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.calendar.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = filter === "all" || 
-      (filter === "used" && item.used) || 
-      (filter === "unused" && !item.used);
+    const matchesTags = selectedTags.length === 0 || 
+      selectedTags.some(tag => item.tags.includes(tag));
     
-    const matchesPlatform = platformFilter === "all" || platformFilter === item.platform;
+    const matchesPlatforms = selectedPlatforms.length === 0 || 
+      selectedPlatforms.includes(item.platform);
     
-    return matchesSearch && matchesStatus && matchesPlatform;
+    return matchesSearch && matchesTags && matchesPlatforms;
   });
 
   const getPlatformIcon = (platform: string) => {
-    const iconStyle = "w-4 h-4 text-white";
     switch (platform) {
       case 'instagram':
         return <div className="w-6 h-6 bg-pink-500 rounded flex items-center justify-center text-xs font-bold text-white">IG</div>;
